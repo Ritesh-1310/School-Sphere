@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:school_management_app/constants/constants.dart';
 import '../../../backend_integration/models/admin_announcement.dart';
-import '../../../backend_integration/services/api_service.dart';
+import '../../../backend_integration/services/announcement_service.dart';
 
 class StudentsAnnouncementScreen extends StatefulWidget {
   static const routeName = 'StudentsAnnouncementScreen';
@@ -15,12 +15,12 @@ class StudentsAnnouncementScreen extends StatefulWidget {
 
 class _StudentsAnnouncementScreenState
     extends State<StudentsAnnouncementScreen> {
-  final APIService _apiService = APIService();
+  final AnnouncementService _announcementService = AnnouncementService();
   late Future<List<AdminAnnouncement>> _announcementsFuture;
   @override
   void initState() {
     super.initState();
-    _announcementsFuture = _apiService.fetchAllAnnouncements();
+    _announcementsFuture = _announcementService.fetchAllAnnouncements();
   }
 
   @override

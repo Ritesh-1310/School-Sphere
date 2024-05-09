@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../backend_integration/models/teacher_announcement.dart';
-import '../../../backend_integration/services/api_service.dart';
+import '../../../backend_integration/services/announcement_service.dart';
 import '../../../components/custom_button.dart';
 import '../../../constants/constants.dart';
 import 'edit_teachers_announcement_screen.dart';
@@ -20,13 +20,13 @@ class _AdminAnnouncementScreenState extends State<TeacherAnnouncementScreen> {
   final TextEditingController _announcementController = TextEditingController();
   final TextEditingController _authorController = TextEditingController();
 
-  final APIService _apiService = APIService();
+  final AnnouncementService _announcementService = AnnouncementService();
   late Future<List<TeacherAnnouncement>> _announcementsFuture;
 
   @override
   void initState() {
     super.initState();
-    _announcementsFuture = _apiService.fetchAllTeacherAnnouncements();
+    _announcementsFuture = _announcementService.fetchAllTeacherAnnouncements();
   }
 
   @override
@@ -243,9 +243,9 @@ class _AdminAnnouncementScreenState extends State<TeacherAnnouncementScreen> {
     String author = _authorController.text;
 
     if (title.isNotEmpty && content.isNotEmpty && author.isNotEmpty) {
-      await _apiService.postTeacherAnnouncement(title, content, author);
+      await _announcementService.postTeacherAnnouncement(title, content, author);
       setState(() {
-        _announcementsFuture = _apiService.fetchAllTeacherAnnouncements();
+        _announcementsFuture = _announcementService.fetchAllTeacherAnnouncements();
         _titleController.clear();
         _announcementController.clear();
         _authorController.clear();
@@ -293,9 +293,9 @@ class _AdminAnnouncementScreenState extends State<TeacherAnnouncementScreen> {
   }
 
   void _deleteAnnouncement(String id) async {
-    await _apiService.deleteTeacherAnnouncement(id);
+    await _announcementService.deleteTeacherAnnouncement(id);
     setState(() {
-      _announcementsFuture = _apiService.fetchAllTeacherAnnouncements();
+      _announcementsFuture = _announcementService.fetchAllTeacherAnnouncements();
     });
   }
 
@@ -312,7 +312,7 @@ class _AdminAnnouncementScreenState extends State<TeacherAnnouncementScreen> {
       if (value == true) {
         // Reload announcements if the update was successful
         setState(() {
-          _announcementsFuture = _apiService.fetchAllTeacherAnnouncements();
+          _announcementsFuture = _announcementService.fetchAllTeacherAnnouncements();
         });
       }
     });

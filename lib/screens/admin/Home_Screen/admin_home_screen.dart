@@ -5,17 +5,10 @@ import 'package:school_management_app/screens/admin/Admin_Profile_Screen/admin_p
 import 'package:school_management_app/screens/admin/Announcement_Screen/admin_announcement_screen.dart';
 import 'package:school_management_app/screens/admin/Holiday_Screen/holiday_screen.dart';
 import 'package:school_management_app/screens/admin/Home_Screen/widgets/admin_data.dart';
-import 'package:school_management_app/screens/admin/Student_Screen/admin_student_screen.dart';
 import 'package:school_management_app/screens/admin/Teacher_Screen/admin_teacher_screen.dart';
 import 'package:school_management_app/screens/login_screen/login_screen.dart';
-// import 'package:school_management_app/screens/teachers/Announcement_Screen/teachers_announcement_screen.dart';
-// import 'package:school_management_app/screens/teachers/Assignment_Screen/teachers_assignment_screen.dart';
-// import 'package:school_management_app/screens/teachers/Attendance_Screen/teacher_attendance.dart';
-// import 'package:school_management_app/screens/teachers/Chat_Screen/chat_home_screen.dart';
-// import 'package:school_management_app/screens/teachers/Holiday_Screen/holiday_screen.dart';
-// import 'package:school_management_app/screens/teachers/Salary_Screen/salary_screen.dart';
-// import 'package:school_management_app/screens/teachers/Teachers_Profile_Screen/teacher_profile.dart';
-// import 'package:school_management_app/screens/teachers/Time_Table_Screen/teachers_time_table_screen.dart';
+import '../Student_Screen/admin_student_screen.dart';
+import '../classrooms/classroom_screen.dart';
 
 class AdminHomeScreen extends StatefulWidget {
   const AdminHomeScreen({super.key});
@@ -45,7 +38,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                     const Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        AdminName(adminName: "Admin Admin"),
+                        AdminName(adminName: "Admin"),
                       ],
                     ),
                     kHalfSizedBox,
@@ -57,26 +50,6 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                         }),
                   ],
                 ),
-                // sizedBox,
-                // Row(
-                //   mainAxisAlignment: MainAxisAlignment.spaceAround,
-                //   children: [
-                //     AdminDataCard(
-                //         title: "View Attendance",
-                //         // value: "90.2%",
-                //         onPress: () {
-                //           Navigator.pushNamed(
-                //               context, TeacherAttendanceScreen.routeName);
-                //         }),
-                //     AdminDataCard(
-                //       title: " View Salary",
-                //       // value: "Rs 6000",
-                //       onPress: () {
-                //         Navigator.pushNamed(context, SalaryScreen.routeName);
-                //       },
-                //     ),
-                //   ],
-                // )
               ],
             ),
           ),
@@ -143,8 +116,23 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                         HomeCard(
                           onPress: () {},
                           icon: 'assets/icons/timetable.svg',
-                          title: 'Modify Time Table',
+                          title: 'Time Table',
                         ),
+                        HomeCard(
+                          onPress: () {
+                            Navigator.pushNamed(
+                              context,
+                              AdminClassRoomScreen.routeName,
+                            );
+                          },
+                          icon: 'assets/icons/group.svg',
+                          title: 'Class Room',
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
                         HomeCard(
                           onPress: () {
                             Navigator.of(context).pushNamedAndRemoveUntil(

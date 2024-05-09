@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../backend_integration/models/admin_announcement.dart';
-import '../../../backend_integration/services/api_service.dart';
+import '../../../backend_integration/services/announcement_service.dart';
 import '../../../components/custom_button.dart';
 import '../../../constants/constants.dart';
 import 'edit_announcement_screen.dart';
@@ -19,13 +19,13 @@ class _AdminAnnouncementScreenState extends State<AdminAnnouncementScreen> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _announcementController = TextEditingController();
   // final TextEditingController _authorController = TextEditingController();
-  final APIService _apiService = APIService();
+  final AnnouncementService _announcementService = AnnouncementService();
   late Future<List<AdminAnnouncement>> _announcementsFuture;
 
   @override
   void initState() {
     super.initState();
-    _announcementsFuture = _apiService.fetchAllAnnouncements();
+    _announcementsFuture = _announcementService.fetchAllAnnouncements();
   }
 
   @override
@@ -213,9 +213,9 @@ class _AdminAnnouncementScreenState extends State<AdminAnnouncementScreen> {
     String author = "Admin";
 
     if (title.isNotEmpty && content.isNotEmpty && author.isNotEmpty) {
-      await _apiService.postAnnouncement(title, content, author);
+      await _announcementService.postAnnouncement(title, content, author);
       setState(() {
-        _announcementsFuture = _apiService.fetchAllAnnouncements();
+        _announcementsFuture = _announcementService.fetchAllAnnouncements();
         _titleController.clear();
         _announcementController.clear();
         // _authorController.clear();
@@ -263,9 +263,9 @@ class _AdminAnnouncementScreenState extends State<AdminAnnouncementScreen> {
   }
 
   void _deleteAnnouncement(String id) async {
-    await _apiService.deleteAnnouncement(id);
+    await _announcementService.deleteAnnouncement(id);
     setState(() {
-      _announcementsFuture = _apiService.fetchAllAnnouncements();
+      _announcementsFuture = _announcementService.fetchAllAnnouncements();
     });
   }
 
@@ -281,7 +281,7 @@ class _AdminAnnouncementScreenState extends State<AdminAnnouncementScreen> {
       if (value == true) {
         // Reload announcements if the update was successful
         setState(() {
-          _announcementsFuture = _apiService.fetchAllAnnouncements();
+          _announcementsFuture = _announcementService.fetchAllAnnouncements();
         });
       }
     });

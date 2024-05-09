@@ -5,7 +5,6 @@ import 'package:school_management_app/screens/login_screen/login_screen.dart';
 import 'package:school_management_app/screens/students/announcement_screen/view_announcement_screen.dart';
 import 'package:school_management_app/screens/students/assignment_screen/assignment_screen.dart';
 import 'package:school_management_app/screens/students/attendance/attendance.dart';
-import 'package:school_management_app/screens/students/doubt_screen/student_chat_home_screen.dart';
 import 'package:school_management_app/screens/students/event_screen/event_screen.dart';
 import 'package:school_management_app/screens/students/fee_screen/fee_screen.dart';
 import 'package:school_management_app/screens/students/gallery_screen/gallery_screen.dart';
@@ -16,7 +15,7 @@ import 'package:school_management_app/screens/students/profile/student_profile.d
 import 'package:school_management_app/screens/students/time_table_screen/students_time_table_screen.dart';
 
 class StudentHomeScreen extends StatefulWidget {
-  const StudentHomeScreen({super.key});
+  const StudentHomeScreen({Key? key}) : super(key: key);
   static const routeName = 'StudentHomeScreen';
 
   @override
@@ -24,6 +23,22 @@ class StudentHomeScreen extends StatefulWidget {
 }
 
 class _StudentHomeScreenState extends State<StudentHomeScreen> {
+  late String studentName;
+  late int regNo;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    final Map<String, dynamic>? userData =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
+
+    studentName = "${userData?['fname']} ${userData?['lname']}";
+    String reg = userData?['email'];
+    regNo = int.tryParse(reg.replaceAll(RegExp(r'[^0-9]'), '')) ?? 0;
+    regNo %= 20000;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,47 +54,48 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    const Column(
+                    Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        StudentName(studentName: "Manish Kumar"),
-                        kHalfSizedBox,
+                        StudentName(studentName: studentName),
+                        const SizedBox(height: kDefaultPadding / 2),
                         StudentClass(
-                          studentClass: "Class X-II A | Roll no 573",
-                        ),
-                        kHalfSizedBox,
+                            studentClass: "Class X-II A | Reg No $regNo"),
+                        const SizedBox(height: kDefaultPadding / 2),
                         StudentYear(session: "2020-24"),
                       ],
                     ),
-                    kHalfSizedBox,
+                    const SizedBox(width: kDefaultPadding / 2),
                     StudentPicture(
-                        picLocation: 'assets/images/student_profile.png',
-                        onPress: () {
-                          Navigator.pushNamed(
-                              context, StudentProfileScreen.routeName);
-                        }),
-                  ],
-                ),
-                sizedBox,
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    StudentDataCard(
-                        title: "Attendance",
-                        value: "90.2%",
-                        onPress: () {
-                          Navigator.pushNamed(
-                              context, StudentAttendaceScreen.routeName);
-                        }),
-                    StudentDataCard(
-                      title: "Fee Dues",
-                      value: "Rs 6000",
+                      picLocation: 'assets/images/profile_placeholder.jpeg',
                       onPress: () {
-                        Navigator.pushNamed(context, FeeScreen.routeName);
+                        Navigator.pushNamed(
+                            context, StudentProfileScreen.routeName);
                       },
                     ),
                   ],
-                )
+                ),
+                SizedBox(height: kDefaultPadding),
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+                //   children: [
+                //     StudentDataCard(
+                //       title: "Attendance",
+                //       value: "90.2%",
+                //       onPress: () {
+                //         Navigator.pushNamed(
+                //             context, StudentAttendaceScreen.routeName);
+                //       },
+                //     ),
+                //     StudentDataCard(
+                //       title: "Fee Dues",
+                //       value: "Rs 6000",
+                //       onPress: () {
+                //         Navigator.pushNamed(context, FeeScreen.routeName);
+                //       },
+                //     ),
+                //   ],
+                // )
               ],
             ),
           ),
@@ -103,8 +119,7 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
                       children: [
                         HomeCard(
                           onPress: () {
-                            Navigator.pushNamed(
-                                context, TeachersListScreen.routeName);
+                            // Navigator.pushNamed(context, StudentChatHomeScreen.routeName);
                           },
                           icon: 'assets/icons/ask.svg',
                           title: 'Ask',
@@ -115,31 +130,31 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
                                 context, AssignmentScreen.routeName);
                           },
                           icon: 'assets/icons/assignment.svg',
-                          title: 'Assignemnts',
+                          title: 'Assignments',
                         ),
                       ],
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        HomeCard(
-                          onPress: () {
-                            Navigator.pushNamed(
-                                context, MarksPostScreen.routeName);
-                          },
-                          icon: 'assets/icons/result.svg',
-                          title: 'Marks',
-                        ),
-                        HomeCard(
-                          onPress: () {
-                            Navigator.pushNamed(
-                                context, StudentsAnnouncementScreen.routeName);
-                          },
-                          icon: 'assets/icons/announcement.svg',
-                          title: 'View Announcements',
-                        ),
-                      ],
-                    ),
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    //   children: [
+                    //     // HomeCard(
+                    //     //   onPress: () {
+                    //     //     Navigator.pushNamed(
+                    //     //         context, MarksPostScreen.routeName);
+                    //     //   },
+                    //     //   icon: 'assets/icons/result.svg',
+                    //     //   title: 'Marks',
+                    //     // ),
+                    //     HomeCard(
+                    //       onPress: () {
+                    //         Navigator.pushNamed(
+                    //             context, StudentsAnnouncementScreen.routeName);
+                    //       },
+                    //       icon: 'assets/icons/announcement.svg',
+                    //       title: 'View Announcements',
+                    //     ),
+                    //   ],
+                    // ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
@@ -181,30 +196,21 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
                         ),
                       ],
                     ),
-                    // Row(
-                    //   mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    //   children: [
-                    //     HomeCard(
-                    //       onPress: () {},
-                    //       icon: 'assets/icons/resume.svg',
-                    //       title: 'Leave Application',
-                    //     ),
-                    //     HomeCard(
-                    //       onPress: () {
-                    //         Navigator.pushNamed(context, EventScreen.routeName);
-                    //       },
-                    //       icon: 'assets/icons/event.svg',
-                    //       title: 'Events',
-                    //     ),
-                    //   ],
-                    // ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
+                        // HomeCard(
+                        //   onPress: () {},
+                        //   icon: 'assets/icons/lock.svg',
+                        //   title: 'Change Password',
+                        // ),
                         HomeCard(
-                          onPress: () {},
-                          icon: 'assets/icons/lock.svg',
-                          title: 'Change Password',
+                          onPress: () {
+                            Navigator.pushNamed(
+                                context, StudentsAnnouncementScreen.routeName);
+                          },
+                          icon: 'assets/icons/announcement.svg',
+                          title: 'View Announcements',
                         ),
                         HomeCard(
                           onPress: () {
@@ -227,14 +233,15 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
       ),
     );
   }
-} 
+}
 
 class HomeCard extends StatelessWidget {
-  const HomeCard(
-      {super.key,
-      required this.onPress,
-      required this.icon,
-      required this.title});
+  const HomeCard({
+    Key? key,
+    required this.onPress,
+    required this.icon,
+    required this.title,
+  }) : super(key: key);
 
   final VoidCallback onPress;
   final String icon;
@@ -253,25 +260,25 @@ class HomeCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(kDefaultPadding / 2),
         ),
         child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SvgPicture.asset(
-                icon,
-                height: 40,
-                width: 40,
-                // ignore: deprecated_member_use
-                color: kOtherColor,
-              ),
-              Text(
-                title,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.titleSmall,
-              ),
-              const SizedBox(
-                height: kDefaultPadding / 3,
-              )
-            ]),
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SvgPicture.asset(
+              icon,
+              height: 40,
+              width: 40,
+              color: kOtherColor,
+            ),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.titleSmall,
+            ),
+            const SizedBox(
+              height: kDefaultPadding / 3,
+            )
+          ],
+        ),
       ),
     );
   }

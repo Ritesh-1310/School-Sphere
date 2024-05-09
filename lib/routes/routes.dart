@@ -3,7 +3,6 @@ import 'package:school_management_app/screens/admin/Admin_Profile_Screen/admin_p
 import 'package:school_management_app/screens/admin/Announcement_Screen/admin_announcement_screen.dart';
 import 'package:school_management_app/screens/admin/Holiday_Screen/holiday_screen.dart';
 import 'package:school_management_app/screens/admin/Home_Screen/admin_home_screen.dart';
-import 'package:school_management_app/screens/admin/Student_Screen/admin_add_student_screen.dart';
 import 'package:school_management_app/screens/admin/Student_Screen/admin_student_screen.dart';
 import 'package:school_management_app/screens/admin/Teacher_Screen/admin_teacher_screen.dart';
 import 'package:school_management_app/screens/signup_screen/SignUp_Screen.dart';
@@ -46,7 +45,10 @@ import 'package:school_management_app/screens/teachers/Salary_Screen/salary_scre
 import 'package:school_management_app/screens/teachers/Teachers_Profile_Screen/teacher_profile.dart';
 import 'package:school_management_app/screens/teachers/Time_Table_Screen/teachers_time_table_screen.dart';
 
+import '../screens/admin/classrooms/add_class_screen.dart';
+import '../screens/admin/classrooms/classroom_screen.dart';
 import '../screens/teachers/Announcement_Screen/teachers_announcement_screen.dart';
+import '../screens/teachers/classrooms/classroom_screen.dart';
 
 Map<String, WidgetBuilder> routes = {
   SplashScreen.routeName: (context) => const SplashScreen(),
@@ -60,7 +62,9 @@ Map<String, WidgetBuilder> routes = {
   AdminHolidayScreen.routeName: (context) => const AdminHolidayScreen(),
   AdminStudentScreen.routeName: (context) => const AdminStudentScreen(),
   AdminTeacherScreen.routeName: (context) => const AdminTeacherScreen(),
-  AdminAddStudentScreen.routeName: (context) => AdminAddStudentScreen(),
+  // AdminAddStudentScreen.routeName: (context) => AdminAddStudentScreen(),
+  AdminClassRoomScreen.routeName: (context) => const AdminClassRoomScreen(),
+  AddClassScreen.routeName: (context) => const AddClassScreen(),
 
   // Students Route
   StudentHomeScreen.routeName: (context) => const StudentHomeScreen(),
@@ -105,9 +109,10 @@ Map<String, WidgetBuilder> routes = {
       const TeachersTimeTableScreen(),
   TeachersPostAssignmentScreen.routeName: (context) =>
       const TeachersPostAssignmentScreen(),
+  TeacherClassRoomScreen.routeName: (context) => const TeacherClassRoomScreen(),
 
   /////////////////// common
   SignUpScreen.routeName: (context) => SignUpScreen(),
   SignUpAsTeacher.routeName: (context) => SignUpAsTeacher(),
-  SignUpAsStudent.routeName: (context) => SignUpAsStudent(),
+  SignUpAsStudent.routeName: (context) => const SignUpAsStudent(),
 };
