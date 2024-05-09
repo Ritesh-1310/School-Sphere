@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../backend_integration/models/teacher_announcement.dart';
-import '../../../backend_integration/services/api_service.dart';
+import '../../../backend_integration/services/announcement_service.dart';
 import '../../../components/custom_button.dart';
 
 class EditAnnouncementScreen extends StatefulWidget {
@@ -17,7 +17,7 @@ class _EditAnnouncementScreenState extends State<EditAnnouncementScreen> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _announcementController = TextEditingController();
   final TextEditingController _authorController = TextEditingController();
-  final APIService _apiService = APIService();
+  final AnnouncementService _announcementService = AnnouncementService();
 
   @override
   void initState() {
@@ -87,7 +87,7 @@ class _EditAnnouncementScreenState extends State<EditAnnouncementScreen> {
     String author = _authorController.text;
 
     if (title.isNotEmpty && content.isNotEmpty && author.isNotEmpty) {
-      await _apiService.updateTeacherAnnouncement(
+      await _announcementService.updateTeacherAnnouncement(
           widget.announcement.id, title, content, author);
       Navigator.pop(context, true); // Return true to indicate successful update
     } else {

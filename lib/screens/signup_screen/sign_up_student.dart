@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:school_management_app/backend_integration/services/api_service.dart';
+import 'package:school_management_app/backend_integration/services/auth_service.dart';
 import 'package:school_management_app/components/custom_button.dart';
 import 'package:school_management_app/constants/constants.dart';
 import 'package:school_management_app/screens/login_screen/login_screen.dart';
@@ -17,7 +17,7 @@ class SignUpAsStudent extends StatefulWidget {
 
 class _SignUpAsStudentState extends State<SignUpAsStudent> {
   final _formKey = GlobalKey<FormState>();
-  final APIService _apiService = APIService();
+  final AuthService _authService = AuthService();
 
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
@@ -440,7 +440,7 @@ class _SignUpAsStudentState extends State<SignUpAsStudent> {
         print("contact: $contact");
         print("date of birth: $dob");
 
-        final response = await _apiService.register(userType, {
+        final response = await _authService.register(userType, {
           'email': email,
           'password': password,
           'fname': fname,

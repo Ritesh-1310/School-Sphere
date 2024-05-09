@@ -1,70 +1,119 @@
+// admin_teacher_screen.dart
 import 'package:flutter/material.dart';
+import 'package:school_management_app/backend_integration/models/teacher_model.dart';
 import 'package:school_management_app/constants/constants.dart';
 
-class AdminTeacherScreen extends StatelessWidget {
-  const AdminTeacherScreen({super.key});
+import '../../../backend_integration/services/teacher_sevice.dart';
+
+class AdminTeacherScreen extends StatefulWidget {
+  const AdminTeacherScreen({Key? key}) : super(key: key);
 
   static const routeName = 'AdminTeacherScreen';
+
+  @override
+  _AdminTeacherScreenState createState() => _AdminTeacherScreenState();
+}
+
+class _AdminTeacherScreenState extends State<AdminTeacherScreen> {
+  late Future<List<TeacherRegister>> _teachersFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _teachersFuture = APIService.fetchTeachers();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Techer Section'),
+        title: const Text('Teachers List'),
         centerTitle: true,
       ),
       backgroundColor: kOtherColor,
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView(
-              physics: const BouncingScrollPhysics(),
-              children: [
-                HomeCard(
-                  onPress: () {
-                  },
-                  title: 'View All Teacher',
-                ),
-                HomeCard(
-                  onPress: () {},
-                  title: 'Add a new Teacher',
-                ),
-              ],
-            ),
-          ),
-        ],
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: FutureBuilder<List<TeacherRegister>>(
+          future: _teachersFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            } else if (snapshot.hasData) {
+              return TeacherListScreen(teachers: snapshot.data!);
+            } else {
+              return const Center(child: Text('No data available'));
+            }
+          },
+        ),
       ),
     );
   }
 }
 
-class HomeCard extends StatelessWidget {
-  const HomeCard({super.key, required this.onPress, required this.title});
+class TeacherListScreen extends StatelessWidget {
+  final List<TeacherRegister> teachers;
 
-  final VoidCallback onPress;
-  final String title;
+  const TeacherListScreen({Key? key, required this.teachers}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onPress,
-      child: Container(
-        margin: const EdgeInsets.only(top: kDefaultPadding / 2),
-        height: MediaQuery.of(context).size.height / 15,
-        decoration: BoxDecoration(
-          color: kPrimaryColor,
-          borderRadius: BorderRadius.circular(kDefaultPadding / 2),
+    return ListView.builder(
+      itemCount: teachers.length,
+      itemBuilder: (context, index) {
+        return TeacherDetailsAccordion(teacher: teachers[index]);
+      },
+    );
+  }
+}
+
+class TeacherDetailsAccordion extends StatelessWidget {
+  const TeacherDetailsAccordion({
+    Key? key,
+    required this.teacher,
+  }) : super(key: key);
+
+  final TeacherRegister teacher;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 4,
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      color: kPrimaryColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: ExpansionTile(
+        title: Text(
+          '${teacher.fname} ${teacher.lname}',
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.titleSmall,
+        children: [
+          // ListTile(
+          //   title: Text(
+          //     'Class: ${teacher.className}',
+          //     style: const TextStyle(fontSize: 16, color: Colors.white,),
+          //   ),
+          // ),
+          ListTile(
+            title: Text(
+              'Email: ${teacher.email}',
+              style: const TextStyle(fontSize: 16, color: Colors.white,),
             ),
-          ],
-        ),
+          ),
+          ListTile(
+            title: Text(
+              'Contact: ${teacher.contact}',
+              style: const TextStyle(fontSize: 16, color: Colors.white,),
+            ),
+          ),
+        ],
       ),
     );
   }

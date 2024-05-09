@@ -11,6 +11,7 @@ import 'package:school_management_app/screens/teachers/Home_Screen/widgets/teach
 import 'package:school_management_app/screens/teachers/Salary_Screen/salary_screen.dart';
 import 'package:school_management_app/screens/teachers/Teachers_Profile_Screen/teacher_profile.dart';
 import 'package:school_management_app/screens/teachers/Time_Table_Screen/teachers_time_table_screen.dart';
+import '../classrooms/classroom_screen.dart';
 
 class TeacherHomeScreen extends StatefulWidget {
   const TeacherHomeScreen({super.key});
@@ -21,6 +22,18 @@ class TeacherHomeScreen extends StatefulWidget {
 }
 
 class _TeacherHomeScreenState extends State<TeacherHomeScreen> {
+  late String teacherName;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    final Map<String, dynamic>? userData =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
+
+    teacherName = "${userData?['fname']} ${userData?['lname']}";
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,15 +49,15 @@ class _TeacherHomeScreenState extends State<TeacherHomeScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    const Column(
+                    Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        TeacherName(teacherName: "Bhaskar Biswas"),
+                        TeacherName(teacherName: teacherName),
                       ],
                     ),
                     kHalfSizedBox,
                     TeacherPicture(
-                        picLocation: 'assets/images/teachers/bbmain.jpg',
+                        picLocation: 'assets/images/teachers/placeholderImg.jpeg',
                         onPress: () {
                           Navigator.pushNamed(
                               context, TeacherProfileScreen.routeName);
@@ -156,9 +169,14 @@ class _TeacherHomeScreenState extends State<TeacherHomeScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         HomeCard(
-                          onPress: () {},
-                          icon: 'assets/icons/lock.svg',
-                          title: 'Change Password',
+                          onPress: () {
+                            Navigator.pushNamed(
+                              context,
+                              TeacherClassRoomScreen.routeName,
+                            );
+                          },
+                          icon: 'assets/icons/group.svg',
+                          title: 'Class Room',
                         ),
                         HomeCard(
                           onPress: () {
@@ -172,6 +190,16 @@ class _TeacherHomeScreenState extends State<TeacherHomeScreen> {
                         ),
                       ],
                     ),
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    //   children: [
+                    //     HomeCard(
+                    //       onPress: () {},
+                    //       icon: 'assets/icons/lock.svg',
+                    //       title: 'Change Password',
+                    //     ),
+                    //   ],
+                    // ),
                   ],
                 ),
               ),

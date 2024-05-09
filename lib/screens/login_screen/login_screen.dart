@@ -1,18 +1,15 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:school_management_app/backend_integration/services/api_service.dart';
 import 'package:school_management_app/components/custom_button.dart';
 import 'package:school_management_app/constants/constants.dart';
 import 'package:school_management_app/screens/admin/Home_Screen/admin_home_screen.dart';
 import 'package:school_management_app/screens/signup_screen/SignUp_Screen.dart';
 import 'package:school_management_app/screens/students/home_screen/home_screen.dart';
 import 'package:school_management_app/screens/teachers/Home_Screen/home_screen.dart';
-
-late bool _passwordVisible;
+import '../../backend_integration/services/auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  const LoginScreen({Key? key}) : super(key: key);
   static const routeName = 'loginScreen';
 
   @override
@@ -24,12 +21,14 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
-  final APIService _apiService = APIService();
+  final AuthService _authService = AuthService();
+
+  late bool _passwordVisible;
 
   @override
   void initState() {
     super.initState();
-    _passwordVisible = true;
+    _passwordVisible = false;
   }
 
   @override
@@ -39,7 +38,6 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Scaffold(
         body: ListView(
           children: [
-            // dividing the screen into two half
             SizedBox(
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height / 2.8,
@@ -62,20 +60,20 @@ class _LoginScreenState extends State<LoginScreen> {
                         "Hi",
                         style: Theme.of(context)
                             .textTheme
-                            .bodyLarge!
+                            .bodyText1!
                             .copyWith(fontWeight: FontWeight.normal),
                       ),
                       const SizedBox(
                         width: 5,
                       ),
-                      Text("User", style: Theme.of(context).textTheme.bodyLarge)
+                      Text("User", style: Theme.of(context).textTheme.bodyText1)
                     ],
                   ),
                   const SizedBox(
                     height: kDefaultPadding / 6,
                   ),
                   Text("Sign In To Continue",
-                      style: Theme.of(context).textTheme.titleSmall),
+                      style: Theme.of(context).textTheme.headline6),
                 ],
               ),
             ),
@@ -97,19 +95,19 @@ class _LoginScreenState extends State<LoginScreen> {
                       key: _formKey,
                       child: Column(
                         children: [
-                          sizedBox,
+                          SizedBox(height: kDefaultPadding),
                           buildEmailField(),
                           const SizedBox(
                             height: kDefaultPadding,
                           ),
                           buildPasswordField(),
-                          sizedBox,
+                          SizedBox(height: kDefaultPadding),
                           CustomButton(
                             onPress: _signIn,
                             title: "Sign In",
                             iconData: Icons.arrow_forward_outlined,
                           ),
-                          sizedBox,
+                          SizedBox(height: kDefaultPadding),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -158,15 +156,11 @@ class _LoginScreenState extends State<LoginScreen> {
       String userType = _getUserType(email);
 
       try {
-        print("userType: $userType");
-        print("Email: $email");
-        print("Password: $password");
-        final response = await _apiService.login(userType, email, password);
+        final response = await _authService.login(userType, email, password);
         final jsonResponse = jsonDecode(response);
-        print("Response: ${jsonResponse['status']}");
 
         if (jsonResponse['status'] == 'success') {
-          _navigateToHomeScreen(userType);
+          _navigateToHomeScreen(userType, jsonResponse['data']);
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -175,7 +169,6 @@ class _LoginScreenState extends State<LoginScreen> {
           );
         }
       } catch (e) {
-        print('Error: $e');
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('An error occurred. Please try again later.'),
@@ -186,63 +179,55 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   String _getUserType(String email) {
-  if (email == 'admin@iiitkalyani.ac.in') {
-    return 'admin';
-  }
-  else if (email == 'director@iiitkalyani.ac.in') {
-    return 'director';
-  } else if (email.contains('@iiitkalyani.ac.in')) {
-    if (_isStudentEmail(email)) {
-      return 'student';
+    if (email == 'admin@iiitkalyani.ac.in') {
+      return 'admin';
+    } else if (email == 'director@iiitkalyani.ac.in') {
+      return 'director';
+    } else if (email.contains('@iiitkalyani.ac.in')) {
+      if (_isStudentEmail(email)) {
+        return 'student';
+      } else {
+        return 'teacher';
+      }
     } else {
-      return 'teacher';
+      return 'student';
     }
-  } else {
-    return 'student';
   }
-}
 
-bool _isStudentEmail(String email) {
-  final parts = email.split('@');
-  final emailPrefix = parts[0];
-  
-  // Check if the emailPrefix contains a digit
-  if (RegExp(r'\d').hasMatch(emailPrefix)) {
-    return true; // If it contains a digit, consider it as a student email
-  } else {
-    return false; // Otherwise, it's not a student email
+  bool _isStudentEmail(String email) {
+    final parts = email.split('@');
+    final emailPrefix = parts[0];
+
+    // Check if the emailPrefix contains a digit
+    if (RegExp(r'\d').hasMatch(emailPrefix)) {
+      return true; // If it contains a digit, consider it as a student email
+    } else {
+      return false; // Otherwise, it's not a student email
+    }
   }
-}
 
-
-  void _navigateToHomeScreen(String userType) {
+  void _navigateToHomeScreen(String userType, Map<String, dynamic> userData) {
     switch (userType) {
       case 'director':
-        Navigator.pushNamedAndRemoveUntil(
-          context,
-          AdminHomeScreen.routeName,
-          (route) => false,
-        );
-        break;
       case 'admin':
-        Navigator.pushNamedAndRemoveUntil(
+        Navigator.pushReplacementNamed(
           context,
           AdminHomeScreen.routeName,
-          (route) => false,
+          arguments: userData,
         );
         break;
       case 'student':
-        Navigator.pushNamedAndRemoveUntil(
+        Navigator.pushReplacementNamed(
           context,
           StudentHomeScreen.routeName,
-          (route) => false,
+          arguments: userData,
         );
         break;
       case 'teacher':
-        Navigator.pushNamedAndRemoveUntil(
+        Navigator.pushReplacementNamed(
           context,
           TeacherHomeScreen.routeName,
-          (route) => false,
+          arguments: userData,
         );
         break;
       default:
@@ -259,7 +244,9 @@ bool _isStudentEmail(String email) {
         fontWeight: FontWeight.w300,
       ),
       decoration: const InputDecoration(
-        prefixIcon: Icon(Icons.email),
+        prefixIcon: Icon(
+          Icons.email,
+        ),
         labelText: "Enter Email",
         floatingLabelBehavior: FloatingLabelBehavior.never,
         isDense: true,
@@ -268,9 +255,9 @@ bool _isStudentEmail(String email) {
       validator: (value) {
         RegExp regExp = RegExp(emailPattern);
         if (value == null || value.isEmpty) {
-          return "Email Field cannot be empty";
+          return "This field is required";
         } else if (!regExp.hasMatch(value)) {
-          return "Please enter a valid email address";
+          return "Enter a valid email address";
         }
         return null;
       },
@@ -279,7 +266,7 @@ bool _isStudentEmail(String email) {
 
   TextFormField buildPasswordField() {
     return TextFormField(
-      obscureText: _passwordVisible,
+      obscureText: !_passwordVisible,
       keyboardType: TextInputType.visiblePassword,
       style: const TextStyle(
         color: kTextBlackColor,
@@ -287,7 +274,7 @@ bool _isStudentEmail(String email) {
         fontWeight: FontWeight.w300,
       ),
       decoration: InputDecoration(
-        prefixIcon: const Icon(Icons.password),
+        prefixIcon: const Icon(Icons.lock),
         labelText: "Enter Password",
         floatingLabelBehavior: FloatingLabelBehavior.never,
         isDense: true,
@@ -298,17 +285,15 @@ bool _isStudentEmail(String email) {
             });
           },
           icon: Icon(
-            _passwordVisible
-                ? Icons.visibility_off_outlined
-                : Icons.visibility_outlined,
+            _passwordVisible ? Icons.visibility : Icons.visibility_off,
           ),
           iconSize: kDefaultPadding,
         ),
       ),
       controller: _passwordController,
       validator: (value) {
-        if (value!.length < 7) {
-          return "Password must be more than 7 characters";
+        if (value == null || value.isEmpty) {
+          return "This field is required";
         }
         return null;
       },

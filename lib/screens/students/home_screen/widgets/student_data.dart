@@ -87,8 +87,8 @@ class StudentPicture extends StatelessWidget {
       // on tap go to the profile edit page
       onTap: onPress,
       child: CircleAvatar(
-        minRadius: 50.0,
-        maxRadius: 50.0,
+        minRadius: 45.0,
+        maxRadius: 45.0,
         backgroundColor: kSecondaryColor,
         backgroundImage: AssetImage(picLocation),
       ),
